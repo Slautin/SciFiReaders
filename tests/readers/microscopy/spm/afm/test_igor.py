@@ -7,7 +7,7 @@ import os
 import pickle
 import numpy as np
 
-sys.path.append("../../../../../SciFiReaders/")
+sys.path.append("../../../../")
 import SciFiReaders as sr
 
 root_path = "https://github.com/pycroscopy/SciFiDatasets/blob/main/data/microscopy/spm/afm/"
@@ -64,7 +64,7 @@ class TestIgorIBW(unittest.TestCase):
     def test_igor_matrix_file_image(self):
         #Test the image file reads correctly
         file_cits = '20230110-152047_ScV6Sn6-2023-01-10-STM_NANOPROBE_AtomManipulation--37_1-I 3_Backward_Down.ibw?raw=true'
-        file_path = os.path.join(root_path, file_cits)
+        file_path = root_path + file_cits
         file_out = 'img_file.ibw'
         urllib.request.urlretrieve(file_path, file_out)
         reader = sr.IgorMatrixReader(file_out)
