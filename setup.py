@@ -11,7 +11,7 @@ with open(os.path.join(here, 'SciFiReaders/__version__.py')) as f:
 
 # TODO: Move requirements to requirements.txt
 requirements = [  # basic
-                'setuptools',
+                'setuptools<81',
                 'numpy',
                 'toolz',  # dask installation failing without this
                 'cytoolz',  # dask installation failing without this
