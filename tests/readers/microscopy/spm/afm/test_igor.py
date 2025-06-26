@@ -42,9 +42,9 @@ class TestIgorIBW(unittest.TestCase):
 
         #Load the metadata
         file_metadata = 'orig_dict.p?raw=true'
-        file_path = os.path.join(root_path, file_metadata)
+        file_path = root_path + file_metadata)
         metadata_out = 'cits_metadata.p'
-        wget.download(file_path, out=metadata_out)
+        urllib.request.urlretrieve(file_path, metadata_out)
         true_metadata = pickle.load(open(metadata_out, 'rb'))
         received_metadata = dataset.original_metadata
         for key in true_metadata: 
@@ -87,8 +87,9 @@ class TestIgorIBW(unittest.TestCase):
 
         #Load the metadata
         file_metadata = 'image_dict.p?raw=true'
-        file_path = os.path.join(root_path, file_metadata)
+        file_path = root_path + file_metadata)
         img_metadata_out = 'img_metadata.p'
+        urllib.request.urlretrieve(file_path, img_metadata_out)
         wget.download(file_path, out=img_metadata_out)
         true_metadata = pickle.load(open(img_metadata_out, 'rb'))
         received_metadata = dataset.original_metadata
