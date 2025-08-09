@@ -186,9 +186,9 @@ class EMDReader(sidpy.Reader):
             for detector in detectors.values():
                 if self.metadata['BinaryResult']['Detector'] in detector['DetectorName']:
                     if 'OffsetEnergy' in detector:
-                        offset = float(detector['OffsetEnergy'])/self.bin
+                        offset = float(detector['OffsetEnergy'])
                     if 'Dispersion' in detector:
-                        dispersion = float(detector['Dispersion'])/self.bin
+                        dispersion = float(detector['Dispersion'])*self.bin*1.003
 
             self.datasets[key].units = 'counts'
             self.datasets[key].quantity = 'intensity'
@@ -341,12 +341,12 @@ class EMDReader(sidpy.Reader):
         if 'Stage' in metadata:
             if 'BetaTilt' not in metadata['Stage']:
                 metadata['Stage']['BetaTilt'] = 0.0
-                experiment['stage'] = {"holder": "",
-                                       "position": {"x": float(metadata['Stage']['Position']['x']),
-                                                    "y": float(metadata['Stage']['Position']['y']),
-                                                    "z": float(metadata['Stage']['Position']['z'])},
-                                       "tilt": {"alpha": float(metadata['Stage']['AlphaTilt']),
-                                                "beta": float(metadata['Stage']['BetaTilt'])}}
+            experiment['stage'] = {"holder": "",
+                                    "position": {"x": float(metadata['Stage']['Position']['x']),
+                                                "y": float(metadata['Stage']['Position']['y']),
+                                                "z": float(metadata['Stage']['Position']['z'])},
+                                    "tilt": {"alpha": float(metadata['Stage']['AlphaTilt']),
+                                            "beta": float(metadata['Stage']['BetaTilt'])}}
         if 'Instrument'in metadata:
             if 'InstrumentModel' in metadata['Instrument']:
                 model = metadata['Instrument']['InstrumentModel']
@@ -403,3 +403,4 @@ def get_stream(data, size, data_stream, bin):
         else:
             data[pixel_number, int(value/bin-0.2)] += 1
     return data, frame
+

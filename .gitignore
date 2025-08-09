@@ -118,3 +118,11 @@ tests/readers/microscopy/em/tem/EMDReader_Spectrum_FEI.emd
 tests/readers/converters/server_user_id.txt
 tests/readers/microscopy/em/tem/DMReader_Image_SI-Survey.dm3
 tests/readers/microscopy/em/tem/server_user_id.txt
+NionReader_ImageStack_STO_HAADF.h5
+DMReader_Image_SI-Survey.dm3
+EMDReader_Image_FEI.emd
+PTO_SS_00.h5
+relax_test_data.h5
+relax_test_data2.h5
+test_data.mrc
+vpfm_data.h5
