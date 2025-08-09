@@ -370,6 +370,7 @@ class EMDReader(sidpy.Reader):
                 experiment['sample'] = metadata['Sample']['SampleDescription']
             if 'SampleId' in metadata['Sample']:
                 experiment['sample_id'] = metadata['Sample']['SampleId']
+        eds = {}
         if 'Detectors' in metadata:
             used_detector = experiment['detector']
             for detector in metadata['Detectors'].values():
@@ -394,7 +395,8 @@ class EMDReader(sidpy.Reader):
                                                 'LiveTime': float(detector['LiveTime'])}}
         
         self.datasets[key].metadata['experiment'] = experiment.copy()
-        self.datasets[key].metadata['EDS'] = eds.copy()
+        if len(eds) > 0:
+            self.datasets[key].metadata['EDS'] = eds.copy()
 
         if self.datasets[key].title == 'generic':
             self.datasets[key].title = experiment['detector']
