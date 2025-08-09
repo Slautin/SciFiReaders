@@ -186,9 +186,9 @@ class EMDReader(sidpy.Reader):
             for detector in detectors.values():
                 if self.metadata['BinaryResult']['Detector'] in detector['DetectorName']:
                     if 'OffsetEnergy' in detector:
-                        offset = float(detector['OffsetEnergy'])/self.bin
+                        offset = float(detector['OffsetEnergy'])
                     if 'Dispersion' in detector:
-                        dispersion = float(detector['Dispersion'])/self.bin
+                        dispersion = float(detector['Dispersion'])*self.bin*1.003
 
             self.datasets[key].units = 'counts'
             self.datasets[key].quantity = 'intensity'
@@ -403,3 +403,4 @@ def get_stream(data, size, data_stream, bin):
         else:
             data[pixel_number, int(value/bin-0.2)] += 1
     return data, frame
+
