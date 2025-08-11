@@ -62,7 +62,7 @@ class IgorMatrixReader(Reader):
 
         data_mat = ibw_obj['wave']['wData']
         if self.parm_dict['datatype']=='image':
-            data_mat = np.rot90(data_mat,3)
+            data_mat = np.flip(data_mat, axis=0)
             xvec = np.linspace(0, self.parm_dict['image_width'], data_mat.shape[1])
             yvec = np.linspace(0, self.parm_dict['image_height'], data_mat.shape[0] )
             
