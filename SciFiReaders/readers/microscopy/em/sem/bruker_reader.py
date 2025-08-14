@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
 
+"""
 ################################################################################
 # Python class for reading Bruker .rto files into sidpy Dataset
 # and extracting all metadata
@@ -10,20 +9,16 @@
 # Works for python 3
 #
 ################################################################################
-
-import numpy as np
+"""
 import os
-
 import codecs
 import xml
 
+import numpy as np
 import sidpy
 
-__all__ = ["BrukerReader", "version"]
-
-version = '0.1beta'
-
-debugLevel = 0  # 0=none, 1-3=basic, 4-5=simple, 6-10 verbose
+__version__ = '0.1beta'
+__all__ = ["BrukerReader", "__version__"]
 
 
 def get_bruker_dictionary(filename):
@@ -54,12 +49,14 @@ def get_bruker_dictionary(filename):
                     for child in neighbor.iter():
                         if 'verlay' in child.tag:
                             pos = child.find('./Pos')
-                            if pos != None:
+                            if pos is not None:
                                 over['pos_x'] = int(pos.find('./PosX').text)
                                 over['pos_y'] = int(pos.find('./PosY').text)
+                                over['position'] = [over['pos_x'], over['pos_y']]
                                 over['type'] = 'spot'
+                                over['label'] = neighbor.attrib['Name']
             if 'TRTImageData' in neighbor.attrib['Type']:
-                dd = neighbor.find("./ClassInstance[@Type='TRTCrossOverlayElement']")
+                _ = neighbor.find("./ClassInstance[@Type='TRTCrossOverlayElement']")
                 image = neighbor
                 if 'image' not in tags:
                     tags['image'] = {}
@@ -96,7 +93,7 @@ def get_bruker_dictionary(filename):
                                     child2.attrib["RelativeArea"])
                     else:
                         if child.tag != 'ResponseFunction':
-                            if child.text != None:
+                            if child.text is not None:
                                 tags['detector'][child.tag] = child.text
 
                                 if child.tag == 'SiDeadLayerThickness':
@@ -118,15 +115,15 @@ def get_bruker_dictionary(filename):
                     tags['spectrum'] = {}
                 if 'Name' in neighbor.attrib:
                     spectrum = neighbor
-                    TRTHeader = spectrum.find('./TRTHeaderedClass')
+                    trt_header = spectrum.find('./TRTHeaderedClass')
 
-                    if TRTHeader != None:
-                        hardware_header = TRTHeader.find("./ClassInstance[@Type='TRTSpectrumHardwareHeader']")
+                    if trt_header is not None:
+                        hardware_header = trt_header.find("./ClassInstance[@Type='TRTSpectrumHardwareHeader']")
                         spectrum_header = spectrum.find("./ClassInstance[@Type='TRTSpectrumHeader']")
                         result_header = spectrum.find("./ClassInstance[@Type='TRTResult']")
                         tags['spectrum'][spectrum_number] = {}
                         tags['spectrum'][spectrum_number]['hardware_header'] = {}
-                        if hardware_header != None:
+                        if hardware_header is not None:
                             for child in hardware_header:
                                 tags['spectrum'][spectrum_number]['hardware_header'][child.tag] = child.text
                         tags['spectrum'][spectrum_number]['detector_header'] = {}
@@ -178,8 +175,8 @@ def get_image(tags, key=0):
                                              quantity=quantity,
                                              dimension_type=dimension_type))
 
-    dataset.metadata['experiment'] = tags['esma'].copy()
-    dataset.metadata['overlay'] = tags['overlay']['image1'].copy()
+    dataset.metadata['experiment'] = tags.get('esma', {}).copy()
+    dataset.metadata['annotations'] = tags.get('overlay', {}).get('image1', {}).copy()
     return dataset
 
 
@@ -203,12 +200,12 @@ def get_spectrum(tags, key=0):
                                              dimension_type='spectral'))
 
     dataset.metadata['experiment'] = tags['esma'].copy()
-    tags['experiment']['acceleration_voltage'] =  float(tags['experiment']['PrimaryEnergy'])*1000.
-    dataset.metadata['EDS'] = {'detector': tags['detector']}
+    acceleration_voltage = float(tags.get('experiment', {}).get('PrimaryEnergy', 0))*1000.
+    tags['experiment']['acceleration_voltage'] =  acceleration_voltage
+    dataset.metadata['EDS'] = {'detector': tags.get('detector', '')}
     dataset.metadata['EDS']['results'] = {}
-    for key, result in spectrum['results'].items():
+    for  result in spectrum.get('results', {}).values():
         if 'Name' in result:
-            key = result['Name']
             dataset.metadata['EDS']['results'][result['Name']] = result.copy()
     return dataset
 
@@ -243,7 +240,7 @@ class BrukerReader(sidpy.Reader):
         self.verbose = verbose
         self.__filename = file_path
 
-        path, file_name = os.path.split(self.__filename)
+        _, file_name = os.path.split(self.__filename)
         self.basename, self.extension = os.path.splitext(file_name)
         self.datasets = {}
         self.tags = {}
@@ -252,13 +249,16 @@ class BrukerReader(sidpy.Reader):
                 self.tags = get_bruker_dictionary(file_path)
 
             except IOError:
-                raise IOError("File {} does not seem to be of Bruker's .rto format".format(self.__filename))
+                raise IOError(f"File {self.__filename} does not seem to be of Bruker's .rto format")
         self.channel_number = 0
+
+    def can_read(self):
+        """ Checks if the reader can read the file format """
+        return 'rto' in self.extension
 
     def read(self):
         """ Parses the dictionary that was extracted from the xml type file of Bruker .rto file
-        Reads image and spectra
-
+        Reads images and spectra
         """
         if 'image' in self.tags:
             key = f"Channel_{int(self.channel_number):03d}"
@@ -266,7 +266,7 @@ class BrukerReader(sidpy.Reader):
             self.channel_number += 1
 
             self.datasets[key].title = self.basename+'_image'
-            self.datasets[key].add_provenance('SciFiReader', 'BrukerReader', version=version,
+            self.datasets[key].add_provenance('SciFiReader', 'BrukerReader', version=__version__,
                                               linked_data=f'File: {self.basename}.{self.extension}')
         if 'spectrum' in self.tags:
             for spectrum_key in self.tags['spectrum']:
@@ -275,16 +275,16 @@ class BrukerReader(sidpy.Reader):
                 self.channel_number += 1
 
                 self.datasets[key].title = self.basename + '_spectrum_' + str(spectrum_key)
-                self.datasets[key].add_provenance('SciFiReader', 'BrukerReader', version=version,
+                self.datasets[key].add_provenance('SciFiReader', 'BrukerReader', version=__version__,
                                                   linked_data=f'File: {self.basename}.{self.extension}')
         return self.datasets
 
     def get_filename(self):
+        """ Returns the filename of the Bruker file"""
         return self.__filename
 
     def get_datasets(self):
+        """ Returns the datasets created by the reader""" 
         return self.datasets
 
     filename = property(get_filename)
-
-

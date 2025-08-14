@@ -16,4 +16,4 @@ from .bruker_reader import BrukerReader
 
 __all__ = ['EDAXReader', 'BrukerReader']
 
-all_readers = [ EDAXReader, BrukerReader]
+all_readers = [EDAXReader, BrukerReader]
