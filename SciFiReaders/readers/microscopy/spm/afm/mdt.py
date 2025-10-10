@@ -286,7 +286,7 @@ class MDTReader(Reader):
                     f"from reference dataset '{ref_key}' "
                     f"({ref_meta.get(field)!r}).")
 
-        spans = np.array([(np.max(d.x) - np.min(d.x)) for d in spectrum_dict.values()])
+        spans = np.array([(np.max(d.x.values) - np.min(d.x.values)) for d in spectrum_dict.values()])
         minimums = np.array([np.min(d.x) for d in spectrum_dict.values()])
 
         # Define threshold as 10% of mean span
