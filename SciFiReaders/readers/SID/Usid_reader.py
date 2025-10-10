@@ -324,12 +324,11 @@ class Usid_reader(Reader):
             
 
         return sid_datasets
-    
-    
-    def can_read(self):
+
+    def close(self):
         """
-        Tests whether or not the provided file has a .h5 extension
-        Returns
-        -------
+        Closes the HDF5 file.
         """
-        pass   
+        if self._file is not None:
+            self._file.close()
+            self._file = None
