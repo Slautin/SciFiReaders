@@ -239,10 +239,19 @@ class MDTReader(Reader):
         _points_data_y = np.array(_points_data_y)
 
         #build point cloud
+        _metadata = _values[0].metadata.copy()
+        _units = _metadata['units']
+        _ar_channels = _metadata['channels']
+        _u = _units[0] if len(_units) == 1 else 'a.u.'
+        _q = _ar_channels[0] if len(_ar_channels) == 1 else 'signal'
+
         point_cloud_dset = sidpy.Dataset.from_array(_points_data_y,
                                                     datatype='point_cloud',  # specify point_cloud datatype
                                                     coordinates=_coordinates,  # necessery
+                                                    units=_u,
+                                                    quantity=_q,
                                                     )
+
         point_cloud_dset.set_dimension(0, sidpy.Dimension(np.arange(_points_data_y.shape[0]),
                                               name='point number',
                                               quantity='Point number',
@@ -254,7 +263,7 @@ class MDTReader(Reader):
         else:
             point_cloud_dset.set_dimension(1, main_x)
 
-        point_cloud_dset.metadata = _values[0].metadata
+        point_cloud_dset.metadata = _metadata
         point_cloud_dset.metadata.pop('coordinate', None)
         point_cloud_dset.original_metadata = _values[0].original_metadata
 
@@ -590,10 +599,13 @@ class Frame:
             _full_y_data = _ar_values[:,1]
             _full_x_data = _ar_values[0,0]
 
+            _u = _units[0] if len(_units)==1 else 'a.u.'
+            _q = _ar_channels[0] if len(_ar_channels)==1 else 'signal'
+
             _data = sid.Dataset.from_array(_full_y_data.T,
                                            name='spectrum',
-                                           units='a.u.',
-                                           quantity='signal',
+                                           units=_u,
+                                           quantity=_q,
                                            datatype = 'spectrum',
                                            title='Spectrum')
 
