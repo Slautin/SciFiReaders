@@ -293,7 +293,8 @@ class MDTReader(Reader):
         threshold = 0.1 * spans.mean()
         # Check consistency of the x axes
         if (spans.max() - spans.min() >= threshold) or (minimums.max() - minimums.min() >= threshold):
-            raise ValueError("⚠️ Significant difference between the x axes is detected. ")
+            raise ValueError(f"⚠️ Significant difference between the x axes is detected. "
+                             f"Spans: {spans}, Minimums: {minimums}, Threshold: {threshold} ")
 
         #below is 3 service functions for self.to_point_cloud() method
     @staticmethod
