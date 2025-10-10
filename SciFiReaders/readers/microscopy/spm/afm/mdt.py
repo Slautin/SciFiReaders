@@ -287,11 +287,11 @@ class MDTReader(Reader):
                     f"({ref_meta.get(field)!r}).")
 
         spans = np.array([(np.max(d.x.values) - np.min(d.x.values)) for d in spectrum_dict.values()])
-        minimums = np.array([np.min(d.x) for d in spectrum_dict.values()])
+        minimums = np.array([np.min(d.x.values) for d in spectrum_dict.values()])
 
         # Define threshold as 10% of mean span
         threshold = 0.1 * spans.mean()
-        print(f"Spans: {spans}, Minimums: {minimums}, Threshold: {threshold} ")
+        #print(f"Spans: {spans}, Minimums: {minimums}, Threshold: {threshold} ")
         # Check consistency of the x axes
         if (spans.max() - spans.min() >= threshold) or (minimums.max() - minimums.min() >= threshold):
             raise ValueError(f"⚠️ Significant difference between the x axes is detected. "
