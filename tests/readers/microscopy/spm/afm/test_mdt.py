@@ -109,9 +109,9 @@ class TestMDT(unittest.TestCase):
         self.assertEqual(pc.shape, (25, 1, 3522))
         self.assertEqual(spectrum.shape, (3522, 1))
 
-        self.assertEqual(float(pc[10,2,300]), -0.02822897536)
+        self.assertEqual(float(pc[10,0,300]), -0.02822897536)
         self.assertEqual(float(pc[2, 0, -3]), -10.22003349824)
-        self.assertEqual(float(pc[18, 1, 999]), 0.75760466304)
+        self.assertEqual(float(pc[18, 0, 999]), 0.75760466304)
 
 
 
