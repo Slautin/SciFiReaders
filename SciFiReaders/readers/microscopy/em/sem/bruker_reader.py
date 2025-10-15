@@ -140,7 +140,7 @@ def get_bruker_dictionary(filename):
                                     tags['spectrum'][spectrum_number]['results'][result_tag['Atom']] = {}
                                 tags['spectrum'][spectrum_number]['results'][result_tag['Atom']].update(result_tag)
                         tags['spectrum'][spectrum_number]['data'] = np.fromstring(spectrum.find('./Channels').text,
-                                                                                  dtype='Q', sep=",")
+                                                                                  dtype='np.int16', sep=",")
                         spectrum_number += 1
     return tags
 
