@@ -8,12 +8,18 @@ try:
 except ImportError:
     import pip
     pip.main(['install', 'gwyfile'])
-root_path = "https://github.com/pycroscopy/SciFiDatasets/blob/main/data/microscopy/spm/afm/"
 
 """
-numpy version not compatible with pypi version of gwyfile
-The problem is fixed on github but no release is available yet
-So we skip this test for now
+numpy version >= 2.3.0 is not compatible with pypi version of gwyfile.
+The problem is fixed on github but no release is available yet.
+So we skip this test for now.
+"""
+import numpy as np
+print(np.__version__)
+if np.__version__ >= '2.3.0':
+    pytest.skip("Skipping test since gwyfile is not compatible with numpy >= 2.3.0", allow_module_level=True)
+root_path = "https://github.com/pycroscopy/SciFiDatasets/blob/main/data/microscopy/spm/afm/"
+
 @pytest.fixture
 def gwy_file():
     file_path = 'PTO_110_Virgin0001.gwy'
@@ -35,4 +41,3 @@ def test_load_test_gwy_file(gwy_file):
         assert dataset.quantity == channel_names[ind], "Dataset having inconsistent channel names"
         assert dataset.units == channel_units[ind], "Dataset having inconsistent unit names"
         assert dataset.labels == channel_labels[ind], "Dataset having inconsistent channel labels"
-"""
