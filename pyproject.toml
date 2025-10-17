@@ -40,13 +40,13 @@ dependencies = [
     "ipython>=7.1.0",
     "pyUSID",
     "gdown",
-    "mrcfile"
+    "mrcfile",
+    "gwyfile @ git+https://github.com/pycroscopy/gwyfile.git"
 ]
 
 [project.optional-dependencies]
 hyperspy = ["hyperspy"]
 igor2 = ["igor2"]
-gwyddion = ["gwyfile"]
 sid = ["pyUSID", "pyNSID"]
 image = ["pillow", "tifffile"]
 test = ["pytest", "hyperspy", "pyUSID", "gwyfile", "gdown"]
