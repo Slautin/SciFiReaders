@@ -23,8 +23,6 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering :: Information Analysis"
 ]
@@ -41,7 +39,8 @@ dependencies = [
     "pyUSID",
     "gdown",
     "mrcfile",
-    "gwyfile @ git+https://github.com/pycroscopy/gwyfile.git"
+    "pycroscopy-gwyfile",
+    "scipy >= 1.11"
 ]
 
 [project.optional-dependencies]
@@ -49,7 +48,7 @@ hyperspy = ["hyperspy"]
 igor2 = ["igor2"]
 sid = ["pyUSID", "pyNSID"]
 image = ["pillow", "tifffile"]
-test = ["pytest", "hyperspy", "pyUSID", "gwyfile", "gdown"]
+test = ["pytest", "hyperspy", "pyUSID", "gdown"]
 
 [project.urls]
 Homepage = "https://pycroscopy.github.io/SciFiReaders/about.html"
